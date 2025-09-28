@@ -1,0 +1,37 @@
+// prisma/schema.prisma
+// ----------------------------------------------------
+// 1. Database Connection (Datasource)
+// ----------------------------------------------------
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ----------------------------------------------------
+// 2. Prisma Client Generator
+// ----------------------------------------------------
+generator client {
+  provider = "prisma-client-js"
+  // Keep this line commented out to use the default output path in node_modules
+  // output   = "./node_modules/.prisma/client"
+}
+
+// ----------------------------------------------------
+// 3. Data Models
+// ----------------------------------------------------
+model BlogPost {
+  id          Int      @id @default(autoincrement())
+  title       String   @unique
+  slug        String   @unique @db.VarChar(255)
+  shortDesc   String   @db.VarChar(500)
+  content     String
+  imageUrl    String?
+  tags        String[]
+
+  published   Boolean  @default(false)
+  publishDate DateTime @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime @updatedAt
+
+  @@index([slug])
+  @@index([published, publishDate])
+}
